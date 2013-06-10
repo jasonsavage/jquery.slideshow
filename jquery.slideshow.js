@@ -22,6 +22,17 @@
 		nav : null,
 		
 		/**
+		 * html used to create navigation 
+		 * @param html [object]
+		 */
+		html : {
+			next : '<a class="nav next" title="Next">Next</a>',
+			prev : '<a class="nav prev" title="Previous">Previous</a>',
+			menu : '<ul class="nav menu"></ul>',
+			menuBtn : '<a title="View slide {i}" >{i}</a>'
+		},
+		
+		/**
 		 * Sets the delay between slides 
 		 * @param delay [int] 
 		 */
@@ -47,10 +58,12 @@
 			//find slide at index and fade in
 			$slides.eq(index).stop().fadeIn();
 		}
+		
    	};
 	
 	//public methods
     var methods = {
+    	
     	init: function (options)
         {
         	settings = $.extend(settings, options);
@@ -88,9 +101,15 @@
         		return index;
         },
         
+        disabled : function(value)
+        {
+        	disabled = value;
+        },
+        
         pause : function()
         {
         	paused = true;
+        	resetTimer();
         },
         
         play : function()
@@ -123,12 +142,13 @@
 		$slides		= null,
 		timer 		= null,
 		delay		= 0,
-		paused		= false;
+		paused		= false,
+		disabled	= false;
 	
 	//private methods
 	function gotoSlide(i)
 	{
-		if(paused) return;
+		if(disabled) return;
 
 		if( i !== index )
 		{
@@ -149,9 +169,10 @@
 	
 	function resetTimer()
 	{
-		if(delay > 0)
+		clearTimeout(timer);
+		
+		if(!paused && delay > 0)
 		{
-			clearTimeout(timer);
 			timer = setTimeout(methods.next, delay);
 		}
 	}
@@ -166,19 +187,19 @@
 			//add previous button
 			if( /(prev)/.test(type) === true )
 			{
-				s.prev = $('<a class="nav prev" title="Previous">Previous</a>').appendTo($control);
+				s.prev = $(settings.html.prev).appendTo($control);
 			}
 			
 			//add next button
 			if( /(next)/.test(type) === true )
 			{
-				s.next = $('<a class="nav next" title="Next">Next</a>').appendTo($control);
+				s.next = $(settings.html.next).appendTo($control);
 			}
 			
 			//add menu
 			if( /(menu)/.test(type) === true )
 			{
-				s.menu = $('<ul class="nav menu"></ul>').appendTo($control);
+				s.menu = $(settings.html.menu).appendTo($control);
 			}
 		}
 		else
@@ -207,7 +228,7 @@
 			//create <a> tags and listeners
 			$slides.each(function(i) 
 			{
-				var $b = $('<a title="View slide ' + (i + 1) + '" >' + (i + 1) + '</a>')
+				var $b = $( settings.create.menuBtn.replace("{i}", i+1) )
 							.appendTo($m)
 							.on('click', function(e) {
 								e.preventDefault();
@@ -220,15 +241,9 @@
 		
 	}
 	
-	function limit(x, min, max)
-	{
-		return Math.min(Math.max(x, min), max);
-	}
 	function limitWrap(x, min, max)
 	{
-		if(x > max) return min;
-		if(x < min) return max;
-		return x;
+		return (x > max) ? min : ( (x < min) ? max : x );
 	}
 
 
