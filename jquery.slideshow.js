@@ -228,7 +228,7 @@
 			//create <a> tags and listeners
 			$slides.each(function(i) 
 			{
-				var $b = $( settings.create.menuBtn.replace("{i}", i+1) )
+				var $b = $( settings.html.menuBtn.replace("{i}", i+1) )
 							.appendTo($m)
 							.on('click', function(e) {
 								e.preventDefault();
