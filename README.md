@@ -3,7 +3,7 @@ jquery.slideshow
 
 Basic jquery.slideshow() that allows full control over the animation when switching slides.
 
-At the most basic usage, this plugin with fade in and out a group of elements:
+At the most basic usage, this plugin will fade in and out a group of elements:
 
 ```html
 <div class="slideshow">
